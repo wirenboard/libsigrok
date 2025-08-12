@@ -1,7 +1,0 @@
-# begin-remove-after: released:forky
-# protective diversion for upgrades of files moved from / to /usr
-libsigrok4t64: diversion-for-unknown-file lib/udev/rules.d/60-libsigrok.rules [preinst:*]
-libsigrok4t64: diversion-for-unknown-file lib/udev/rules.d/61-libsigrok-plugdev.rules [preinst:*]
-libsigrok4t64: diversion-for-unknown-file lib/udev/rules.d/61-libsigrok-uaccess.rules [preinst:*]
-# end-remove-after
-libsigrok4t64: package-name-doesnt-match-sonames libsigrok4

@@ -1,57 +1,8 @@
-libsigrok (0.5.2-5.1+wb100) stable; urgency=medium
+libsigrok (0.5.2-3+wb100) stable; urgency=medium
 
   * Fork for the Wiren Board.
 
- -- Ilya Titov <ilya.titov@wirenboard.com>  Tue, 12 Aug 2025 14:42:43 +0300
-
-libsigrok (0.5.2-5.1) unstable; urgency=medium
-
-  * Non-maintainer upload.
-  * Rename libraries for 64-bit time_t transition.  Closes: #1062623
-
- -- Benjamin Drung <bdrung@debian.org>  Wed, 28 Feb 2024 19:45:25 +0000
-
-libsigrok (0.5.2-5) unstable; urgency=medium
-
-  [ Debian Janitor ]
-  * Remove constraints unnecessary since buster (oldstable):
-    + Build-Depends: Drop versioned constraint on libglib2.0-dev (>= 2.32.0).
-    + Build-Depends: Drop versioned constraint on libserialport-dev (>= 0.1.0).
-    + Build-Depends: Drop versioned constraint on libusb-1.0-0-dev (>= 1.0.16).
-    + Build-Depends: Drop versioned constraint on libzip-dev (>= 0.10).
-    + Build-Depends: Drop versioned constraint on pkg-config (>= 0.22).
-    + libsigrok-dev: Drop versioned constraint on libglib2.0-dev (>= 2.32.0) in
-      Depends.
-    + libsigrok-dev: Drop versioned constraint on libserialport-dev (>= 0.1.0)
-      in Depends.
-    + libsigrok-dev: Drop versioned constraint on libusb-1.0-0-dev (>= 1.0.16)
-      in Depends.
-    + libsigrok-dev: Drop versioned constraint on libzip-dev (>= 0.10) in
-      Depends.
-
-  [ Chris Boot ]
-  * DEP17: Install udev rules into /usr, with (M10) protective diversion
-    against possible file loss as exhibited by Multi-Arch: same packages (P7).
-    Diversion code can be removed in forky+1. (Closes: 1056668)
-
- -- Jonathan McDowell <noodles@earth.li>  Sun, 03 Dec 2023 19:43:23 +0000
-
-libsigrok (0.5.2-4) unstable; urgency=medium
-
-  [ Jonathan McDowell ]
-  * Lintian inspired cleanups:
-    * Remove duplicated "Section" field from libsigrok4/libsigrokcxx4.
-    * Use HTTPS URL in watch file.
-    * Remove trailing whitespace in debian/{changelog,control}.
-    * Bump debhelper compat level to 13.
-    * Fix copyright file to only use globs.
-  * Update Standards-Version to 4.6.2
-  * Ignore not-installed .la files
-
-  [ Maksim Salau ]
-  * Make use of icons and the mime type
-
- -- Jonathan McDowell <noodles@earth.li>  Fri, 06 Jan 2023 18:21:07 +0000
+ -- Ilya Titov <ilya.titov@wirenboard.com>  Tue, 12 Aug 2025 16:24:01 +0300
 
 libsigrok (0.5.2-3) unstable; urgency=medium
 
