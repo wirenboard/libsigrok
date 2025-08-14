@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+# export DH_VERBOSE=1
+
+# Reduce the number of unneeded dependencies with --as-needed.
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	mkdir -p debian/tmp/lib/udev/rules.d
+	install -m 644 contrib/60-libsigrok.rules debian/tmp/lib/udev/rules.d/
+	install -m 644 contrib/61-libsigrok-plugdev.rules debian/tmp/lib/udev/rules.d/
+	install -m 644 contrib/61-libsigrok-uaccess.rules debian/tmp/lib/udev/rules.d/
+	dh_auto_install
