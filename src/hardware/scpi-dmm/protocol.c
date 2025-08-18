@@ -303,8 +303,22 @@ SR_PRIV const char *scpi_dmm_owon_get_range_text(const struct sr_dev_inst *sdi)
 		return NULL;
 	}
 	/* Replace Unicode Omega symbol (0xCE 0xA9) with "Ohm". */
+#if __GLIBC_PREREQ(2, 68)
 	GString *response_str = g_string_new(response);
 	g_string_replace(response_str, "\xCE\xA9", "Ohm", 0);
+#else
+	GString *response_str = g_string_new("");
+	const char *src = response;
+	while (*src) {
+		if (src[0] == '\xCE' && src[1] == '\xA9') {
+			g_string_append(response_str, "Ohm");
+			src += 2;
+		} else {
+			g_string_append_c(response_str, *src);
+			src++;
+		}
+	}
+#endif
 	g_free(response);
 	response = g_string_free(response_str, FALSE);
 
