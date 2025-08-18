@@ -1,3 +1,9 @@
+libsigrok (0.5.2-3+wb101) stable; urgency=medium
+
+  * Enhanced Support for OWON XDM Series DMMs: Range Management and XDM1241 Integration
+
+ -- Evgeny Boger <boger@wirenboard.com>  Mon, 18 Aug 2025 15:00:00 +0300
+
 libsigrok (0.5.2-3+wb100) stable; urgency=medium
 
   * Fork for the Wiren Board.
