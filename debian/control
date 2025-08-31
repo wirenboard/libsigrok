@@ -85,6 +85,6 @@ Description: sigrok hardware driver library - shared library
 Package: python3-sigrok
 Section: python
 Architecture: any
-Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}, python3-numpy
 Description: libsigrok Python 3 bindings
  This package contains the Python 3 bindings for the library.
