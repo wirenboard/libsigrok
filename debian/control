@@ -4,6 +4,8 @@ Maintainer: Debian Electronics Packaging Team <pkg-electronics-devel@alioth-list
 Uploaders: Jonathan McDowell <noodles@earth.li>
 Build-Depends: dpkg-dev (>= 1.22.5), check,
 	debhelper-compat (= 13),
+	dh-sequence-python3,
+	libpython3-all-dev,
 	doxygen,
 	libbluetooth-dev,
 	libftdi1-dev,
@@ -14,7 +16,11 @@ Build-Depends: dpkg-dev (>= 1.22.5), check,
 	libserialport-dev,
 	libusb-1.0-0-dev,
 	libzip-dev,
-	pkg-config
+	pkg-config,
+	python3-all-dev:any,,
+	python3-numpy,
+	python-gi-dev,
+	swig
 Standards-Version: 4.6.2
 Section: libs
 Homepage: http://sigrok.org/wiki/Libsigrok
@@ -80,3 +86,10 @@ Description: sigrok hardware driver library - shared library
  drivers for logic analyzers, as well as input/output file format support.
  .
  This package contains the C++ shared library.
+
+Package: python3-sigrok
+Section: python
+Architecture: any
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}, python3-numpy
+Description: libsigrok Python 3 bindings
+ This package contains the Python 3 bindings for the library.
