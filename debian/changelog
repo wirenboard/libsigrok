@@ -1,3 +1,9 @@
+libsigrok (0.5.2-3+wb103) stable; urgency=medium
+
+  * Add support for SR_T_MQ type in Python bindings
+
+ -- Vladimir Zuevskiy <vladimir.zuevskiy@wirenboard.com>  Fri, 05 Sep 2025 17:42:27 +0300
+
 libsigrok (0.5.2-3+wb102) stable; urgency=medium
 
   * Build python3-sigrok
