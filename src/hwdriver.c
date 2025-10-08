@@ -305,6 +305,7 @@ static struct sr_key_info sr_key_info_mq[] = {
 	{SR_MQ_HARMONIC_RATIO, 0, "harmonic_ratio", "Harmonic ratio", NULL},
 	{SR_MQ_ENERGY, 0, "energy", "Energy", NULL},
 	{SR_MQ_ELECTRIC_CHARGE, 0, "electric_charge", "Electric charge", NULL},
+	{SR_MQ_RATE, 0, "measurements_speed", "Measurements speed", NULL},
 	ALL_ZERO
 };
 

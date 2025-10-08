@@ -126,6 +126,8 @@ static const struct scpi_command cmdset_owon[] = {
 	{ DMM_CMD_SETUP_RANGE, "CONF:%s %s", },
 	{ DMM_CMD_QUERY_RANGE, "RANGE?", },
 	{ DMM_CMD_QUERY_RANGE_AUTO, "AUTO?", },
+	{ DMM_CMD_QUERY_RATE, "RATE?", },
+    { DMM_CMD_SETUP_RATE, "RATE %s", },
 	ALL_ZERO,
 };
 
@@ -200,6 +202,7 @@ static const struct mqopt_item mqopts_owon_xdm1041[] = {
 	{ SR_MQ_FREQUENCY, 0, "FREQ", "FREQ", NO_DFLT_PREC, FLAG_NO_RANGE, },
 	{ SR_MQ_TIME, 0, "PER", "PER", NO_DFLT_PREC, FLAG_NO_RANGE, },
 	{ SR_MQ_CAPACITANCE, 0, "CAP", "CAP", NO_DFLT_PREC, FLAGS_NONE, },
+	{ SR_MQ_RATE, 0, "RATE", "RATE", NO_DFLT_PREC, FLAGS_NONE, },
 };
 
 static const struct mqopt_item mqopts_owon_xdm2041[] = {
