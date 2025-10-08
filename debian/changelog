@@ -1,3 +1,9 @@
+libsigrok (0.5.2-3+wb104) stable; urgency=medium
+
+  * add measurement speed commands for OWON XDM1041
+
+ -- Vladimir Zuevskiy <vladimir.zuevskiy@wirenboard.com>  Wed, 08 Oct 2025 10:46:11 +0300
+
 libsigrok (0.5.2-3+wb103) stable; urgency=medium
 
   * Add support for SR_T_MQ type in Python bindings
