@@ -525,6 +525,7 @@ static int config_get(uint32_t key, GVariant **data,
 	GVariant *arr[2];
 	int ret;
 	const char *range;
+	const char *speed;
 
 	(void)cg;
 
@@ -576,6 +577,7 @@ static int config_set(uint32_t key, GVariant *data,
 	enum sr_mqflag mqflag;
 	GVariant *tuple_child;
 	const char *range;
+	const char *speed;
 
 	(void)cg;
 
