@@ -45,6 +45,8 @@ enum scpi_dmm_cmdcode {
 	DMM_CMD_QUERY_RANGE,
 	DMM_CMD_SETUP_RANGE_AUTO,
 	DMM_CMD_SETUP_RANGE,
+	DMM_CMD_SETUP_SPEED,
+	DMM_CMD_QUERY_SPEED,
 };
 
 struct mqopt_item {
@@ -81,6 +83,10 @@ struct scpi_dmm_model {
 	int (*set_range_from_text)(const struct sr_dev_inst *sdi,
 		const char *range);
 	GVariant *(*get_range_text_list)(const struct sr_dev_inst *sdi);
+	const char *(*get_speed_text)(const struct sr_dev_inst *sdi);
+	int (*set_speed_from_text)(const struct sr_dev_inst *sdi,
+		const char *range);
+	GVariant *(*get_speed_text_list)(const struct sr_dev_inst *sdi);
 };
 
 struct dev_context {
@@ -103,6 +109,7 @@ struct dev_context {
 	} run_acq_info;
 	gchar *precision;
 	char range_text[32];
+	char speed_text[32];
 };
 
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi);
@@ -126,5 +133,10 @@ SR_PRIV GVariant *scpi_dmm_owon_get_range_text_list(const struct sr_dev_inst *sd
 SR_PRIV int scpi_dmm_get_meas_agilent(const struct sr_dev_inst *sdi, size_t ch);
 SR_PRIV int scpi_dmm_get_meas_gwinstek(const struct sr_dev_inst *sdi, size_t ch);
 SR_PRIV int scpi_dmm_receive_data(int fd, int revents, void *cb_data);
+
+SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi);
+SR_PRIV int scpi_dmm_owon_set_speed_from_text(const struct sr_dev_inst *sdi,
+	const char *range);
+SR_PRIV GVariant *scpi_dmm_owon_get_speed_text_list(const struct sr_dev_inst *sdi);
 
 #endif

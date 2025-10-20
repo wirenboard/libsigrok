@@ -575,6 +575,121 @@ SR_PRIV GVariant *scpi_dmm_owon_get_range_text_list(const struct sr_dev_inst *sd
 	return list;
 }
 
+
+SR_PRIV int scpi_dmm_owon_set_speed_from_text(const struct sr_dev_inst *sdi,
+            const char *speed)
+{
+	struct dev_context *devc;
+	int ret;
+	const struct mqopt_item *item;
+	const char *param;
+
+	if (!speed || !*speed)
+		return SR_ERR_ARG;
+
+	devc = sdi->priv;
+
+	/* Ensure we have current measurement item (matching style in file) */
+	ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &item);
+	if (ret != SR_OK)
+		return ret;
+	if (!item || !item->scpi_func_setup)
+		return SR_ERR_ARG;
+
+	/* Map textual speed to single-letter code expected by device */
+	if (g_ascii_strcasecmp(speed, "F") == 0)
+		param = "F";
+	else if (g_ascii_strcasecmp(speed, "M") == 0)
+		param = "M";
+	else if (g_ascii_strcasecmp(speed, "L") == 0)
+		param = "L";
+	else
+		return SR_ERR_ARG;
+
+	/* Send setup command */
+	scpi_dmm_cmd_delay(sdi->conn);
+	ret = sr_scpi_cmd(sdi->conn, devc->cmdset, 0, NULL,
+			  DMM_CMD_SETUP_SPEED, item->scpi_func_setup, param);
+	if (ret != SR_OK)
+		return ret;
+
+	if (item->drv_flags & FLAG_CONF_DELAY)
+		g_usleep(devc->model->conf_delay_us);
+
+	return SR_OK;
+}
+
+
+/* C */
+SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
+{
+	struct dev_context *devc;
+	int ret;
+	const struct mqopt_item *item;
+	char *response = NULL;
+	char *p;
+	char ch;
+
+	if (!sdi)
+		return NULL;
+	devc = sdi->priv;
+	if (!devc)
+		return NULL;
+
+	/* Ensure we have current measurement item */
+	ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &item);
+	if (ret != SR_OK)
+		return NULL;
+	if (!item || !item->scpi_func_setup)
+		return NULL;
+
+	/* Query device for speed */
+	scpi_dmm_cmd_delay(sdi->conn);
+	ret = sr_scpi_cmd(sdi->conn, devc->cmdset, 0, NULL,
+		DMM_CMD_QUERY_SPEED, item->scpi_func_setup);
+	if (ret != SR_OK)
+		return NULL;
+
+	ret = sr_scpi_get_string(sdi->conn, NULL, &response);
+	if (ret != SR_OK) {
+		g_free(response);
+		return NULL;
+	}
+	g_strstrip(response);
+
+	/* find first non-space char */
+	p = response;
+	while (*p && g_ascii_isspace(*p))
+		p++;
+	if (!*p) {
+		g_free(response);
+		return NULL;
+	}
+
+	/* use single uppercase character as returned text */
+	ch = g_ascii_toupper(*p);
+	snprintf(devc->speed_text, sizeof(devc->speed_text), "%c", ch);
+
+	g_free(response);
+	return devc->speed_text;
+}
+
+
+SR_PRIV GVariant *scpi_dmm_owon_get_speed_text_list(const struct sr_dev_inst *sdi)
+{
+    GVariantBuilder gvb;
+    GVariant *list;
+
+    /* OWON DMM speeds */
+    g_variant_builder_add(&gvb, "s", "F");
+    g_variant_builder_add(&gvb, "s", "M");
+    g_variant_builder_add(&gvb, "s", "L");
+
+    list = g_variant_builder_end(&gvb);
+    return list;
+}
+
+
 SR_PRIV int scpi_dmm_get_meas_agilent(const struct sr_dev_inst *sdi, size_t ch)
 {
 	struct sr_scpi_dev_inst *scpi;

@@ -48,6 +48,15 @@ static const uint32_t devopts_generic_range[] = {
 	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
 };
 
+static const uint32_t devopts_owon_range[] = {
+	SR_CONF_CONN | SR_CONF_GET,
+	SR_CONF_LIMIT_SAMPLES | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_LIMIT_MSEC | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_MEASURED_QUANTITY | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_MEASUREMENTS_SPEED | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+};
+
 static const struct scpi_command cmdset_agilent[] = {
 	{ DMM_CMD_SETUP_REMOTE, "\n", },
 	{ DMM_CMD_SETUP_LOCAL, "SYST:LOC", },
@@ -126,6 +135,8 @@ static const struct scpi_command cmdset_owon[] = {
 	{ DMM_CMD_SETUP_RANGE, "CONF:%s %s", },
 	{ DMM_CMD_QUERY_RANGE, "RANGE?", },
 	{ DMM_CMD_QUERY_RANGE_AUTO, "AUTO?", },
+	{ DMM_CMD_SETUP_SPEED, "SPEED %s", },
+    { DMM_CMD_QUERY_SPEED, "SPEED?", }, // F for high speed, M for middle speed, L for low speed
 	ALL_ZERO,
 };
 
@@ -239,6 +250,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 200 * 1000, 2500 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"Agilent", "34410A",
@@ -246,6 +258,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -255,6 +268,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 10 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GW", "GDM8251A",
@@ -262,6 +276,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_gwinstek,
 		ARRAY_AND_SIZE(devopts_generic),
 		2500 * 1000, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -271,6 +286,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic),
 		2500 * 1000, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GWInstek", "GDM9060",
@@ -279,6 +295,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GWInstek", "GDM9061",
@@ -286,6 +303,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -296,6 +314,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		/* 34401A: typ. 1020ms for AC readings (default is 1000ms). */
 		1500 * 1000, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"Keysight", "34465A",
@@ -304,14 +323,16 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 10 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"OWON", "XDM1041",
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm1041),
 		scpi_dmm_get_meas_gwinstek,
-		ARRAY_AND_SIZE(devopts_generic_range),
-		0, 0, 0, 1e9, TRUE,
+		ARRAY_AND_SIZE(devopts_owon_range),
+		0, 0, 15385, 1e9, TRUE, // OWON XDM1041 "High" speed is 65 reading/s = 15385 us per reading
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		scpi_dmm_owon_get_speed_text, scpi_dmm_owon_set_speed_from_text, scpi_dmm_owon_get_speed_text_list,
 	},
 	{
 		"OWON", "XDM1241",
@@ -320,6 +341,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		NULL, NULL, NULL,
 	},
 	{
 		"OWON", "XDM2041",
@@ -328,6 +350,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		NULL, NULL, NULL,
 	},
 	{
 		"Siglent", "SDM3055",
@@ -335,6 +358,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 };
