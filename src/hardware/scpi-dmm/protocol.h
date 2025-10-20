@@ -85,7 +85,7 @@ struct scpi_dmm_model {
 	GVariant *(*get_range_text_list)(const struct sr_dev_inst *sdi);
 	const char *(*get_speed_text)(const struct sr_dev_inst *sdi);
 	int (*set_speed_from_text)(const struct sr_dev_inst *sdi,
-		const char *range);
+		const char *speed);
 	GVariant *(*get_speed_text_list)(const struct sr_dev_inst *sdi);
 };
 
