@@ -53,6 +53,10 @@ static const char *owon_temp_ranges[] = {
 	"KITS90", "Pt100", NULL /* no auto here */
 };
 
+static const char *owon_rate_ranges[] = {
+    "High(65 readings/s)", "Medium(16 readings/s)", "Low(4 readings/s)", NULL
+};
+
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi)
 {
 	if (WITH_CMD_DELAY)
@@ -677,16 +681,45 @@ SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
 
 SR_PRIV GVariant *scpi_dmm_owon_get_speed_text_list(const struct sr_dev_inst *sdi)
 {
-    GVariantBuilder gvb;
-    GVariant *list;
+	GVariantBuilder gvb;
+	GVariant *list;
+	int ret;
+	enum sr_mq mq;
+	enum sr_mqflag mqflag;
+	const char **ranges = NULL;
+	const struct mqopt_item *mqitem; /* нужно только это кажись */
+	int i;
 
-    /* OWON DMM speeds */
-    g_variant_builder_add(&gvb, "s", "F");
-    g_variant_builder_add(&gvb, "s", "M");
-    g_variant_builder_add(&gvb, "s", "L");
+	/* Explicitly use string array type, otherwise empty array won't be typed */
+	g_variant_builder_init(&gvb, G_VARIANT_TYPE_STRING_ARRAY);
 
-    list = g_variant_builder_end(&gvb);
-    return list;
+	/* Get current measurement quantity to return appropriate ranges */
+	ret = scpi_dmm_get_mq(sdi, &mq, &mqflag, NULL, &mqitem);
+	if (ret != SR_OK) {
+		/* Return empty list if we can't determine current mode */
+		list = g_variant_builder_end(&gvb);
+		return list;
+	}
+
+	/* Check if current mode has no rate support */
+	if (mqitem && !(mqitem->drv_flags & FLAG_HAS_RATE)) {
+		/* Return empty list for modes that don't support ranges */
+		list = g_variant_builder_end(&gvb);
+		return list;
+	}
+
+	ranges = owon_rate_ranges;
+
+
+	/* Add all ranges from the selected array */
+	if (ranges) {
+		for (i = 0; ranges[i] != NULL; i++) {
+			g_variant_builder_add(&gvb, "s", ranges[i]);
+		}
+	}
+
+	list = g_variant_builder_end(&gvb);
+	return list;
 }
 
 

@@ -62,6 +62,7 @@ struct mqopt_item {
 #define FLAG_NO_RANGE	(1 << 0)
 #define FLAG_CONF_DELAY	(1 << 1)
 #define FLAG_MEAS_DELAY	(1 << 2)
+#define FLAG_HAS_RATE	(1 << 3)
 
 struct scpi_dmm_model {
 	const char *vendor;
