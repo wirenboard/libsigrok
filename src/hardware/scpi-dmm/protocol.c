@@ -651,7 +651,7 @@ SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
 		return NULL;
 
 	ret = sr_scpi_get_string(sdi->conn, NULL, &response);
-	if (ret != SR_OK) {
+	if (ret != SR_OK || !response) {
 		g_free(response);
 		return NULL;
 	}
