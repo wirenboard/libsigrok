@@ -646,6 +646,8 @@ SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
 		return NULL;
 	if (!item || !item->scpi_func_setup)
 		return NULL;
+	if (!(item->drv_flags & FLAG_HAS_RATE))
+		return NULL;
 
 	/* Query device for speed */
 	scpi_dmm_cmd_delay(sdi->conn);
@@ -672,10 +674,17 @@ SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
 
 	/* use single uppercase character as returned text */
 	ch = g_ascii_toupper(*p);
-	snprintf(devc->speed_text, sizeof(devc->speed_text), "%c", ch);
-
 	g_free(response);
-	return devc->speed_text;
+
+	/* Map to human-readable text */
+	if (ch == 'F')
+		return "High(65 readings/s)";
+	else if (ch == 'M')
+		return "Medium(16 readings/s)";
+	else if (ch == 'L')
+		return "Low(4 readings/s)";
+	else
+		return NULL;
 }
 
 
