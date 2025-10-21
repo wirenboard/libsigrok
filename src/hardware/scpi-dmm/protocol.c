@@ -609,7 +609,7 @@ SR_PRIV int scpi_dmm_owon_set_speed_from_text(const struct sr_dev_inst *sdi,
 	/* Send setup command */
 	scpi_dmm_cmd_delay(sdi->conn);
 	ret = sr_scpi_cmd(sdi, devc->cmdset, 0, NULL,
-			  DMM_CMD_SETUP_SPEED, item->scpi_func_setup, param);
+			  DMM_CMD_SETUP_SPEED, param);
 	if (ret != SR_OK)
 		return ret;
 
