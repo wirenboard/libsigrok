@@ -135,8 +135,8 @@ static const struct scpi_command cmdset_owon[] = {
 	{ DMM_CMD_SETUP_RANGE, "CONF:%s %s", },
 	{ DMM_CMD_QUERY_RANGE, "RANGE?", },
 	{ DMM_CMD_QUERY_RANGE_AUTO, "AUTO?", },
-	{ DMM_CMD_SETUP_SPEED, "RATE %s", },
-    { DMM_CMD_QUERY_SPEED, "RATE?", }, // F for high speed, M for middle speed, L for low speed
+	{ DMM_CMD_SETUP_MEAS_RATE, "RATE %s", },
+    { DMM_CMD_QUERY_MEAS_RATE, "RATE?", },
 	ALL_ZERO,
 };
 
