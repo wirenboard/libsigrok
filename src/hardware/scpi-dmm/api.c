@@ -557,9 +557,9 @@ static int config_get(uint32_t key, GVariant **data,
 		*data = g_variant_new_string(range);
 		return SR_OK;
 	case SR_CONF_MEASUREMENTS_RATE:
-        if (!devc || !devc->model->get_speed_text)
+        if (!devc || !devc->model->get_meas_rate_text)
 			return SR_ERR_NA;
-		speed = devc->model->get_speed_text(sdi);
+		speed = devc->model->get_meas_rate_text(sdi);
 		if (!speed || !*speed)
 			return SR_ERR_NA;
 		*data = g_variant_new_string(speed);
@@ -601,10 +601,10 @@ static int config_set(uint32_t key, GVariant *data,
 		range = g_variant_get_string(data, NULL);
 		return devc->model->set_range_from_text(sdi, range);
     case SR_CONF_MEASUREMENTS_RATE:
-		if (!devc || !devc->model->set_speed_from_text)
+		if (!devc || !devc->model->set_meas_rate_from_text)
 			return SR_ERR_NA;
 		speed = g_variant_get_string(data, NULL);
-		return devc->model->set_speed_from_text(sdi, speed);
+		return devc->model->set_meas_rate_from_text(sdi, speed);
 	default:
 		return SR_ERR_NA;
 	}
@@ -650,9 +650,9 @@ static int config_list(uint32_t key, GVariant **data,
 		*data = devc->model->get_range_text_list(sdi);
 		return SR_OK;
 	case SR_CONF_MEASUREMENTS_RATE:
-		if (!devc || !devc->model->get_speed_text_list)
+		if (!devc || !devc->model->get_meas_rate_text_list)
 			return SR_ERR_NA;
-		*data = devc->model->get_speed_text_list(sdi);
+		*data = devc->model->get_meas_rate_text_list(sdi);
 		return SR_OK;
 	default:
 		(void)devc;
