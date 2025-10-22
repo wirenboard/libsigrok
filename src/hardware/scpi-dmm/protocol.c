@@ -689,7 +689,6 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 {
 	GVariantBuilder gvb;
 	GVariant *list;
-	const char **ranges = NULL;
 	const struct mqopt_item *mqitem;
 
 	/* Explicitly use string array type, otherwise empty array won't be typed */
