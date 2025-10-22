@@ -54,7 +54,7 @@ static const char *owon_temp_ranges[] = {
 };
 
 static const char *owon_rate_ranges[] = {
-    "High(65 readings/s)", "Medium(16 readings/s)", "Low(4 readings/s)", NULL
+    "[H]igh(65 readings/s)", "[M]edium(16 readings/s)", "[L]ow(4 readings/s)", NULL
 };
 
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi)
