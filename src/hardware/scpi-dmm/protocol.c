@@ -613,7 +613,7 @@ SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
 	else if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[1]) == 0)
 		param = "M";
 	else if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[2]) == 0)
-		param = "L";
+		param = "S";
 	else
 		return SR_ERR_ARG;
 
