@@ -692,7 +692,6 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 	int ret;
 	const char **ranges = NULL;
 	const struct mqopt_item *mqitem;
-	int i;
 
 	/* Explicitly use string array type, otherwise empty array won't be typed */
 	g_variant_builder_init(&gvb, G_VARIANT_TYPE_STRING_ARRAY);
@@ -712,14 +711,8 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 		return list;
 	}
 
-	ranges = owon_rate_ranges;
-
-
-	/* Add all ranges from the selected array */
-	if (ranges) {
-		for (i = 0; ranges[i] != NULL; i++) {
-			g_variant_builder_add(&gvb, "s", ranges[i]);
-		}
+	for (int i = 0; owon_rate_ranges[i] != NULL; i++) {
+		g_variant_builder_add(&gvb, "s", owon_rate_ranges[i]);
 	}
 
 	list = g_variant_builder_end(&gvb);
