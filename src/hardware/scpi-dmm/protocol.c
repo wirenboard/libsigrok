@@ -581,34 +581,38 @@ SR_PRIV GVariant *scpi_dmm_owon_get_range_text_list(const struct sr_dev_inst *sd
 
 
 SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
-            const char *speed)
+            const char *meas_rate)
 {
 	struct dev_context *devc;
-	int ret;
-	const struct mqopt_item *item;
+	const struct mqopt_item *mqitem;
 	const char *param;
 
-	if (!speed || !*speed)
+
+	if (!meas_rate || !*meas_rate)
 		return SR_ERR_ARG;
 
 	devc = sdi->priv;
 
-	/* Ensure we have current measurement item (matching style in file) */
-	ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &item);
-	if (ret != SR_OK)
+	/* Get current measurement quantity to return appropriate ranges */
+	int ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &mqitem);
+	if (ret != SR_OK) {
 		return ret;
-	if (!item || !item->scpi_func_setup)
+	}
+
+	if (!mqitem || !mqitem->scpi_func_setup)
 		return SR_ERR_ARG;
 
-	/* Map textual speed to single-letter code expected by device */
-	if (g_ascii_strcasecmp(speed, "H") == 0 ||
-		g_ascii_strcasecmp(speed, "HIGH") == 0)
+	/* Check if current mode has no measurements rate support */
+	if (!(mqitem->drv_flags & FLAG_HAS_MEAS_RATE)) {
+		return SR_ERR_NA;
+	}
+
+	/* Map textual meas_rate to single-letter code expected by device */
+	if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[0]) == 0)
 		param = "F";
-	else if (g_ascii_strcasecmp(speed, "M") == 0 ||
-		g_ascii_strcasecmp(speed, "MEDIUM") == 0)
+	else if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[1]) == 0)
 		param = "M";
-	else if (g_ascii_strcasecmp(speed, "L") == 0 ||
-		g_ascii_strcasecmp(speed, "LOW") == 0)
+	else if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[2]) == 0)
 		param = "L";
 	else
 		return SR_ERR_ARG;
@@ -620,7 +624,7 @@ SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
 	if (ret != SR_OK)
 		return ret;
 
-	if (item->drv_flags & FLAG_CONF_DELAY)
+	if (mqitem->drv_flags & FLAG_CONF_DELAY)
 		g_usleep(devc->model->conf_delay_us);
 
 	return SR_OK;
