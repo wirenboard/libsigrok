@@ -110,7 +110,7 @@ struct dev_context {
 	} run_acq_info;
 	gchar *precision;
 	char range_text[32];
-	char speed_text[32];
+	char meas_rate_text[32];
 };
 
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi);
