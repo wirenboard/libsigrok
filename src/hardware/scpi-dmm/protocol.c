@@ -676,13 +676,12 @@ SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *s
 
 	/* Map to human-readable text */
 	if (ch == 'F')
-		return "High (65 readings/s)";
-	else if (ch == 'M')
-		return "Medium (16 readings/s)";
-	else if (ch == 'L')
-		return "Low (4 readings/s)";
-	else
-		return NULL;
+		return owon_rate_ranges[0];
+	if (ch == 'M')
+		return owon_rate_ranges[1];
+	if (ch == 'L')
+		return owon_rate_ranges[2];
+	return NULL;
 }
 
 
