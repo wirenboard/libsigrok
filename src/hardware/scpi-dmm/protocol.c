@@ -601,11 +601,14 @@ SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
 		return SR_ERR_ARG;
 
 	/* Map textual speed to single-letter code expected by device */
-	if (g_ascii_strcasecmp(speed, "F") == 0)
+	if (g_ascii_strcasecmp(speed, "H") == 0 ||
+		g_ascii_strcasecmp(speed, "HIGH") == 0)
 		param = "F";
-	else if (g_ascii_strcasecmp(speed, "M") == 0)
+	else if (g_ascii_strcasecmp(speed, "M") == 0 ||
+		g_ascii_strcasecmp(speed, "MEDIUM") == 0)
 		param = "M";
-	else if (g_ascii_strcasecmp(speed, "L") == 0)
+	else if (g_ascii_strcasecmp(speed, "L") == 0 ||
+		g_ascii_strcasecmp(speed, "LOW") == 0)
 		param = "L";
 	else
 		return SR_ERR_ARG;
