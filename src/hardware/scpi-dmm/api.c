@@ -577,7 +577,7 @@ static int config_set(uint32_t key, GVariant *data,
 	enum sr_mqflag mqflag;
 	GVariant *tuple_child;
 	const char *range;
-	const char *speed;
+	const char *meas_rate;
 
 	(void)cg;
 
@@ -603,8 +603,8 @@ static int config_set(uint32_t key, GVariant *data,
 	case SR_CONF_MEASUREMENTS_RATE:
 		if (!devc || !devc->model->set_meas_rate_from_text)
 			return SR_ERR_NA;
-		speed = g_variant_get_string(data, NULL);
-		return devc->model->set_meas_rate_from_text(sdi, speed);
+		meas_rate = g_variant_get_string(data, NULL);
+		return devc->model->set_meas_rate_from_text(sdi, meas_rate);
 	default:
 		return SR_ERR_NA;
 	}
