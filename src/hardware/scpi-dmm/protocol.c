@@ -580,7 +580,7 @@ SR_PRIV GVariant *scpi_dmm_owon_get_range_text_list(const struct sr_dev_inst *sd
 }
 
 
-SR_PRIV int scpi_dmm_owon_set_speed_from_text(const struct sr_dev_inst *sdi,
+SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
             const char *speed)
 {
 	struct dev_context *devc;
@@ -625,7 +625,7 @@ SR_PRIV int scpi_dmm_owon_set_speed_from_text(const struct sr_dev_inst *sdi,
 
 
 /* C */
-SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
+SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *sdi)
 {
 	struct dev_context *devc;
 	int ret;
@@ -688,7 +688,7 @@ SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
 }
 
 
-SR_PRIV GVariant *scpi_dmm_owon_get_speed_text_list(const struct sr_dev_inst *sdi)
+SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst *sdi)
 {
 	GVariantBuilder gvb;
 	GVariant *list;

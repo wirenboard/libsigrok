@@ -332,7 +332,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_owon_range),
 		0, 0, 15385, 1e9, TRUE, // OWON XDM1041 "High" speed is 65 reading/s = 15385 us per reading
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
-		scpi_dmm_owon_get_speed_text, scpi_dmm_owon_set_speed_from_text, scpi_dmm_owon_get_speed_text_list,
+		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,
 	},
 	{
 		"OWON", "XDM1241",

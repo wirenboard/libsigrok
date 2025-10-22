@@ -135,9 +135,9 @@ SR_PRIV int scpi_dmm_get_meas_agilent(const struct sr_dev_inst *sdi, size_t ch);
 SR_PRIV int scpi_dmm_get_meas_gwinstek(const struct sr_dev_inst *sdi, size_t ch);
 SR_PRIV int scpi_dmm_receive_data(int fd, int revents, void *cb_data);
 
-SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi);
-SR_PRIV int scpi_dmm_owon_set_speed_from_text(const struct sr_dev_inst *sdi,
+SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *sdi);
+SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
 	const char *range);
-SR_PRIV GVariant *scpi_dmm_owon_get_speed_text_list(const struct sr_dev_inst *sdi);
+SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst *sdi);
 
 #endif
