@@ -54,7 +54,7 @@ static const uint32_t devopts_owon_range[] = {
 	SR_CONF_LIMIT_MSEC | SR_CONF_GET | SR_CONF_SET,
 	SR_CONF_MEASURED_QUANTITY | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
 	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
-	SR_CONF_MEASUREMENTS_SPEED | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_MEASUREMENTS_RATE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
 };
 
 static const struct scpi_command cmdset_agilent[] = {
@@ -556,7 +556,7 @@ static int config_get(uint32_t key, GVariant **data,
 			return SR_ERR_NA;
 		*data = g_variant_new_string(range);
 		return SR_OK;
-	case SR_CONF_MEASUREMENTS_SPEED:
+	case SR_CONF_MEASUREMENTS_RATE:
         if (!devc || !devc->model->get_speed_text)
 			return SR_ERR_NA;
 		speed = devc->model->get_speed_text(sdi);
@@ -600,7 +600,7 @@ static int config_set(uint32_t key, GVariant *data,
 			return SR_ERR_NA;
 		range = g_variant_get_string(data, NULL);
 		return devc->model->set_range_from_text(sdi, range);
-    case SR_CONF_MEASUREMENTS_SPEED:
+    case SR_CONF_MEASUREMENTS_RATE:
 		if (!devc || !devc->model->set_speed_from_text)
 			return SR_ERR_NA;
 		speed = g_variant_get_string(data, NULL);
@@ -649,7 +649,7 @@ static int config_list(uint32_t key, GVariant **data,
 			return SR_ERR_NA;
 		*data = devc->model->get_range_text_list(sdi);
 		return SR_OK;
-	case SR_CONF_MEASUREMENTS_SPEED:
+	case SR_CONF_MEASUREMENTS_RATE:
 		if (!devc || !devc->model->get_speed_text_list)
 			return SR_ERR_NA;
 		*data = devc->model->get_speed_text_list(sdi);

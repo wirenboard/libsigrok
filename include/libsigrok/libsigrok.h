@@ -1272,7 +1272,7 @@ enum sr_configkey {
     "Low" speed is 4 reading/s; "Mid" speed is 16 reading/s; "High" speed is 65
     reading/s.
     */
-    SR_CONF_MEASUREMENTS_SPEED
+    SR_CONF_MEASUREMENTS_RATE
 
 	/* Update sr_key_info_config[] (hwdriver.c) upon changes! */
 };
