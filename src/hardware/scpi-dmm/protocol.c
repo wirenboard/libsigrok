@@ -646,7 +646,7 @@ SR_PRIV const char *scpi_dmm_owon_get_speed_text(const struct sr_dev_inst *sdi)
 		return NULL;
 	if (!item || !item->scpi_func_setup)
 		return NULL;
-	if (!(item->drv_flags & FLAG_HAS_RATE))
+	if (!(item->drv_flags & FLAG_HAS_MEAS_RATE))
 		return NULL;
 
 	/* Query device for speed */
@@ -711,7 +711,7 @@ SR_PRIV GVariant *scpi_dmm_owon_get_speed_text_list(const struct sr_dev_inst *sd
 	}
 
 	/* Check if current mode has no rate support */
-	if (mqitem && !(mqitem->drv_flags & FLAG_HAS_RATE)) {
+	if (mqitem && !(mqitem->drv_flags & FLAG_HAS_MEAS_RATE)) {
 		/* Return empty list for modes that don't support ranges */
 		list = g_variant_builder_end(&gvb);
 		return list;
