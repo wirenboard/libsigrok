@@ -1268,11 +1268,11 @@ enum sr_configkey {
 	SR_CONF_GATE_TIME,
 
 	/**
-	OWON XDM1000 Series provides three types of measurement speed:
-    "Low" speed is 4 reading/s; "Mid" speed is 16 reading/s; "High" speed is 65
-    reading/s.
-    */
-    SR_CONF_MEASUREMENTS_RATE
+	 * OWON XDM1000 Series provides three types of measurement speed:
+	 * "Low" speed is 4 reading/s; "Mid" speed is 16 reading/s; "High" speed is 65
+	 * reading/s.
+	 */
+    SR_CONF_MEASUREMENTS_RATE,
 
 	/* Update sr_key_info_config[] (hwdriver.c) upon changes! */
 };

@@ -267,7 +267,7 @@ static struct sr_key_info sr_key_info_config[] = {
 		"Gate time", NULL},
 
 	{SR_CONF_MEASUREMENTS_RATE, SR_T_STRING, "meas_rate",
-        "Measurements rate", NULL},
+		"Measurements rate", NULL},
 
 	ALL_ZERO
 };

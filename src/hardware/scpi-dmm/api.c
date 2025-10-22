@@ -136,7 +136,7 @@ static const struct scpi_command cmdset_owon[] = {
 	{ DMM_CMD_QUERY_RANGE, "RANGE?", },
 	{ DMM_CMD_QUERY_RANGE_AUTO, "AUTO?", },
 	{ DMM_CMD_SETUP_MEAS_RATE, "RATE %s", },
-    { DMM_CMD_QUERY_MEAS_RATE, "RATE?", },
+ 	{ DMM_CMD_QUERY_MEAS_RATE, "RATE?", },
 	ALL_ZERO,
 };
 
@@ -330,7 +330,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm1041),
 		scpi_dmm_get_meas_gwinstek,
 		ARRAY_AND_SIZE(devopts_owon_range),
-		0, 0, 15385, 1e9, TRUE, // OWON XDM1041 "High" speed is 65 reading/s = 15385 us per reading
+		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
 		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,
 	},
@@ -525,7 +525,7 @@ static int config_get(uint32_t key, GVariant **data,
 	GVariant *arr[2];
 	int ret;
 	const char *range;
-	const char *speed;
+	const char *meas_rate;
 
 	(void)cg;
 
@@ -557,12 +557,12 @@ static int config_get(uint32_t key, GVariant **data,
 		*data = g_variant_new_string(range);
 		return SR_OK;
 	case SR_CONF_MEASUREMENTS_RATE:
-        if (!devc || !devc->model->get_meas_rate_text)
+		if (!devc || !devc->model->get_meas_rate_text)
 			return SR_ERR_NA;
-		speed = devc->model->get_meas_rate_text(sdi);
-		if (!speed || !*speed)
+		meas_rate = devc->model->get_meas_rate_text(sdi);
+		if (!meas_rate || !*meas_rate)
 			return SR_ERR_NA;
-		*data = g_variant_new_string(speed);
+		*data = g_variant_new_string(meas_rate);
 		return SR_OK;
 	default:
 		return SR_ERR_NA;
@@ -600,7 +600,7 @@ static int config_set(uint32_t key, GVariant *data,
 			return SR_ERR_NA;
 		range = g_variant_get_string(data, NULL);
 		return devc->model->set_range_from_text(sdi, range);
-    case SR_CONF_MEASUREMENTS_RATE:
+	case SR_CONF_MEASUREMENTS_RATE:
 		if (!devc || !devc->model->set_meas_rate_from_text)
 			return SR_ERR_NA;
 		speed = g_variant_get_string(data, NULL);
