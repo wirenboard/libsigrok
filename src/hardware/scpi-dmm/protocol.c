@@ -634,7 +634,6 @@ SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *s
 	int ret;
 	const struct mqopt_item *item;
 	char *response = NULL;
-	char *p;
 	char ch;
 
 	if (!sdi)
@@ -666,26 +665,22 @@ SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *s
 	}
 	g_strstrip(response);
 
-	/* find first non-space char */
-	p = response;
-	while (*p && g_ascii_isspace(*p))
-		p++;
-	if (!*p) {
+	if (!*response) {
 		g_free(response);
 		return NULL;
 	}
 
 	/* use single uppercase character as returned text */
-	ch = g_ascii_toupper(*p);
+	ch = g_ascii_toupper(*response);
 	g_free(response);
 
 	/* Map to human-readable text */
 	if (ch == 'F')
-		return "High(65 readings/s)";
+		return "High (65 readings/s)";
 	else if (ch == 'M')
-		return "Medium(16 readings/s)";
+		return "Medium (16 readings/s)";
 	else if (ch == 'L')
-		return "Low(4 readings/s)";
+		return "Low (4 readings/s)";
 	else
 		return NULL;
 }
