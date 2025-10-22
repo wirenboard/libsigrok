@@ -54,7 +54,7 @@ static const char *owon_temp_ranges[] = {
 };
 
 static const char *owon_rate_ranges[] = {
-    "High", "Medium", "Low", NULL /* High - F, Medium - M, Low - L */
+    "High", "Medium", "Low", NULL /* High - F, Medium - M, Low - S */
 };
 
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi)
@@ -683,7 +683,7 @@ SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *s
 		return owon_rate_ranges[0];
 	if (ch == 'M')
 		return owon_rate_ranges[1];
-	if (ch == 'L')
+	if (ch == 'S')
 		return owon_rate_ranges[2];
 	return NULL;
 }
