@@ -631,7 +631,10 @@ SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
 }
 
 
-/* C */
+/*
+ * Retrieves the current measurement rate from the OWON device and maps it
+ * to a human-readable text string ("Fast", "Medium", "Slow").
+ */
 SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *sdi)
 {
 	struct dev_context *devc;
