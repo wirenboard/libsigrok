@@ -689,7 +689,6 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 {
 	GVariantBuilder gvb;
 	GVariant *list;
-	int ret;
 	const char **ranges = NULL;
 	const struct mqopt_item *mqitem;
 
@@ -697,7 +696,7 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 	g_variant_builder_init(&gvb, G_VARIANT_TYPE_STRING_ARRAY);
 
 	/* Get current measurement quantity to return appropriate ranges */
-	ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &mqitem);
+	int ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &mqitem);
 	if (ret != SR_OK) {
 		/* Return empty list if we can't determine current mode */
 		list = g_variant_builder_end(&gvb);
