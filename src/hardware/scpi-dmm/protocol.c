@@ -694,7 +694,7 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 	enum sr_mq mq;
 	enum sr_mqflag mqflag;
 	const char **ranges = NULL;
-	const struct mqopt_item *mqitem; /* нужно только это кажись */
+	const struct mqopt_item *mqitem;
 	int i;
 
 	/* Explicitly use string array type, otherwise empty array won't be typed */
@@ -708,9 +708,9 @@ SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst
 		return list;
 	}
 
-	/* Check if current mode has no rate support */
+	/* Check if current mode has no measurements rate support */
 	if (mqitem && !(mqitem->drv_flags & FLAG_HAS_MEAS_RATE)) {
-		/* Return empty list for modes that don't support ranges */
+		/* Return empty list for modes that don't support measurements rate */
 		list = g_variant_builder_end(&gvb);
 		return list;
 	}
