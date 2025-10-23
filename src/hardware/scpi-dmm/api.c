@@ -323,8 +323,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
-		NULL, NULL, NULL,
-	},
+		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,	},
 	{
 		"OWON", "XDM1241",
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm1041),
