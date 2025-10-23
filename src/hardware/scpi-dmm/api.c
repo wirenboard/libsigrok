@@ -241,6 +241,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 200 * 1000, 2500 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"Agilent", "34410A",
@@ -248,6 +249,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -257,6 +259,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 10 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GW", "GDM8251A",
@@ -264,6 +267,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_gwinstek,
 		ARRAY_AND_SIZE(devopts_generic),
 		2500 * 1000, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -273,6 +277,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic),
 		2500 * 1000, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GWInstek", "GDM9060",
@@ -281,6 +286,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GWInstek", "GDM9061",
@@ -288,6 +294,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -298,6 +305,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		/* 34401A: typ. 1020ms for AC readings (default is 1000ms). */
 		1500 * 1000, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"Keysight", "34465A",
@@ -306,6 +314,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 10 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"OWON", "XDM1041",
@@ -314,6 +323,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		NULL, NULL, NULL,
 	},
 	{
 		"OWON", "XDM1241",
@@ -322,6 +332,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		NULL, NULL, NULL,
 	},
 	{
 		"OWON", "XDM2041",
@@ -330,6 +341,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		NULL, NULL, NULL,
 	},
 	{
 		"Siglent", "SDM3055",
@@ -337,6 +349,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 };
