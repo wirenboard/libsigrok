@@ -48,6 +48,15 @@ static const uint32_t devopts_generic_range[] = {
 	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
 };
 
+static const uint32_t devopts_owon_range[] = {
+	SR_CONF_CONN | SR_CONF_GET,
+	SR_CONF_LIMIT_SAMPLES | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_LIMIT_MSEC | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_MEASURED_QUANTITY | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_MEAS_RATE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+};
+
 static const struct scpi_command cmdset_agilent[] = {
 	{ DMM_CMD_SETUP_REMOTE, "\n", },
 	{ DMM_CMD_SETUP_LOCAL, "SYST:LOC", },
@@ -320,7 +329,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		"OWON", "XDM1041",
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm1041),
 		scpi_dmm_get_meas_gwinstek,
-		ARRAY_AND_SIZE(devopts_generic_range),
+		ARRAY_AND_SIZE(devopts_owon_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
 		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,	},
