@@ -53,6 +53,10 @@ static const char *owon_temp_ranges[] = {
 	"KITS90", "Pt100", NULL /* no auto here */
 };
 
+static const char *owon_rate_ranges[] = {
+		"High", "Medium", "Low", NULL /* High - F, Medium - M, Low - S */
+};
+
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi)
 {
 	if (WITH_CMD_DELAY)
