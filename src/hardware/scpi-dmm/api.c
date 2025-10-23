@@ -524,6 +524,7 @@ static int config_get(uint32_t key, GVariant **data,
 	GVariant *arr[2];
 	int ret;
 	const char *range;
+	const char *meas_rate;
 
 	(void)cg;
 
@@ -554,6 +555,14 @@ static int config_get(uint32_t key, GVariant **data,
 			return SR_ERR_NA;
 		*data = g_variant_new_string(range);
 		return SR_OK;
+	case SR_CONF_MEAS_RATE:
+		if (!devc || !devc->model->get_meas_rate_text)
+			return SR_ERR_NA;
+		meas_rate = devc->model->get_meas_rate_text(sdi);
+		if (!meas_rate || !*meas_rate)
+			return SR_ERR_NA;
+		*data = g_variant_new_string(meas_rate);
+		return SR_OK;
 	default:
 		return SR_ERR_NA;
 	}
@@ -567,6 +576,7 @@ static int config_set(uint32_t key, GVariant *data,
 	enum sr_mqflag mqflag;
 	GVariant *tuple_child;
 	const char *range;
+	const char *meas_rate;
 
 	(void)cg;
 
@@ -589,6 +599,11 @@ static int config_set(uint32_t key, GVariant *data,
 			return SR_ERR_NA;
 		range = g_variant_get_string(data, NULL);
 		return devc->model->set_range_from_text(sdi, range);
+	case SR_CONF_MEAS_RATE:
+		if (!devc || !devc->model->set_meas_rate_from_text)
+			return SR_ERR_NA;
+		meas_rate = g_variant_get_string(data, NULL);
+		return devc->model->set_meas_rate_from_text(sdi, meas_rate);
 	default:
 		return SR_ERR_NA;
 	}
@@ -632,6 +647,11 @@ static int config_list(uint32_t key, GVariant **data,
 		if (!devc || !devc->model->get_range_text_list)
 			return SR_ERR_NA;
 		*data = devc->model->get_range_text_list(sdi);
+		return SR_OK;
+	case SR_CONF_MEAS_RATE:
+		if (!devc || !devc->model->get_meas_rate_text_list)
+			return SR_ERR_NA;
+		*data = devc->model->get_meas_rate_text_list(sdi);
 		return SR_OK;
 	default:
 		(void)devc;
