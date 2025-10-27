@@ -1267,6 +1267,11 @@ enum sr_configkey {
 	 */
 	SR_CONF_GATE_TIME,
 
+	/**
+	 * measurement rate
+	 */
+    SR_CONF_MEAS_RATE,
+
 	/* Update sr_key_info_config[] (hwdriver.c) upon changes! */
 };
 
