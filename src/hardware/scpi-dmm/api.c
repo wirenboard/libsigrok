@@ -48,6 +48,16 @@ static const uint32_t devopts_generic_range[] = {
 	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
 };
 
+static const uint32_t devopts_owon_range[] = {
+	SR_CONF_CONTINUOUS,
+	SR_CONF_CONN | SR_CONF_GET,
+	SR_CONF_LIMIT_SAMPLES | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_LIMIT_MSEC | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_MEASURED_QUANTITY | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_RANGE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_MEAS_RATE | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+};
+
 static const struct scpi_command cmdset_agilent[] = {
 	{ DMM_CMD_SETUP_REMOTE, "\n", },
 	{ DMM_CMD_SETUP_LOCAL, "SYST:LOC", },
@@ -126,6 +136,8 @@ static const struct scpi_command cmdset_owon[] = {
 	{ DMM_CMD_SETUP_RANGE, "CONF:%s %s", },
 	{ DMM_CMD_QUERY_RANGE, "RANGE?", },
 	{ DMM_CMD_QUERY_RANGE_AUTO, "AUTO?", },
+	{ DMM_CMD_SETUP_MEAS_RATE, "RATE %s", },
+ 	{ DMM_CMD_QUERY_MEAS_RATE, "RATE?", },
 	ALL_ZERO,
 };
 
@@ -189,11 +201,11 @@ static const struct mqopt_item mqopts_gwinstek_gdm906x[] = {
 };
 
 static const struct mqopt_item mqopts_owon_xdm1041[] = {
-	{ SR_MQ_VOLTAGE, SR_MQFLAG_AC, "VOLT:AC", "VOLT AC", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_VOLTAGE, SR_MQFLAG_DC, "VOLT:DC", "VOLT", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_CURRENT, SR_MQFLAG_AC, "CURR:AC", "CURR AC", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_CURRENT, SR_MQFLAG_DC, "CURR:DC", "CURR", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_RESISTANCE, 0, "RES", "RES", NO_DFLT_PREC, FLAGS_NONE, },
+	{ SR_MQ_VOLTAGE, SR_MQFLAG_AC, "VOLT:AC", "VOLT AC", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_VOLTAGE, SR_MQFLAG_DC, "VOLT:DC", "VOLT", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_CURRENT, SR_MQFLAG_AC, "CURR:AC", "CURR AC", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_CURRENT, SR_MQFLAG_DC, "CURR:DC", "CURR", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_RESISTANCE, 0, "RES", "RES", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
 	{ SR_MQ_CONTINUITY, 0, "CONT", "CONT", -1, FLAG_NO_RANGE, },
 	{ SR_MQ_VOLTAGE, SR_MQFLAG_DC | SR_MQFLAG_DIODE, "DIOD", "DIOD", -4, FLAG_NO_RANGE, },
 	{ SR_MQ_TEMPERATURE, 0, "TEMP", "TEMP", NO_DFLT_PREC, FLAGS_NONE, },
@@ -203,12 +215,12 @@ static const struct mqopt_item mqopts_owon_xdm1041[] = {
 };
 
 static const struct mqopt_item mqopts_owon_xdm2041[] = {
-	{ SR_MQ_VOLTAGE, SR_MQFLAG_AC, "VOLT:AC", "VOLT AC", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_VOLTAGE, SR_MQFLAG_DC, "VOLT:DC", "VOLT", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_CURRENT, SR_MQFLAG_AC, "CURR:AC", "CURR AC", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_CURRENT, SR_MQFLAG_DC, "CURR:DC", "CURR", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_RESISTANCE, 0, "RES", "RES", NO_DFLT_PREC, FLAGS_NONE, },
-	{ SR_MQ_RESISTANCE, SR_MQFLAG_FOUR_WIRE, "FRES", "FRES", NO_DFLT_PREC, FLAGS_NONE, },
+	{ SR_MQ_VOLTAGE, SR_MQFLAG_AC, "VOLT:AC", "VOLT AC", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_VOLTAGE, SR_MQFLAG_DC, "VOLT:DC", "VOLT", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_CURRENT, SR_MQFLAG_AC, "CURR:AC", "CURR AC", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_CURRENT, SR_MQFLAG_DC, "CURR:DC", "CURR", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_RESISTANCE, 0, "RES", "RES", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
+	{ SR_MQ_RESISTANCE, SR_MQFLAG_FOUR_WIRE, "FRES", "FRES", NO_DFLT_PREC, FLAG_HAS_MEAS_RATE, },
 	{ SR_MQ_CONTINUITY, 0, "CONT", "CONT", -1, FLAG_NO_RANGE, },
 	{ SR_MQ_VOLTAGE, SR_MQFLAG_DC | SR_MQFLAG_DIODE, "DIOD", "DIOD", -4, FLAG_NO_RANGE, },
 	{ SR_MQ_TEMPERATURE, 0, "TEMP", "TEMP", NO_DFLT_PREC, FLAGS_NONE, },
@@ -239,6 +251,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 200 * 1000, 2500 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"Agilent", "34410A",
@@ -246,6 +259,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -255,6 +269,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 10 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GW", "GDM8251A",
@@ -262,6 +277,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_gwinstek,
 		ARRAY_AND_SIZE(devopts_generic),
 		2500 * 1000, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -271,6 +287,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic),
 		2500 * 1000, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GWInstek", "GDM9060",
@@ -279,6 +296,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"GWInstek", "GDM9061",
@@ -286,6 +304,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 	{
@@ -296,6 +315,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		/* 34401A: typ. 1020ms for AC readings (default is 1000ms). */
 		1500 * 1000, 0, 0, 0, FALSE,
 		NULL, NULL, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"Keysight", "34465A",
@@ -304,30 +324,33 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		ARRAY_AND_SIZE(devopts_generic_range),
 		0, 0, 10 * 1000, 0, FALSE,
 		scpi_dmm_get_range_text, scpi_dmm_set_range_from_text, NULL,
+		NULL, NULL, NULL,
 	},
 	{
 		"OWON", "XDM1041",
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm1041),
 		scpi_dmm_get_meas_gwinstek,
-		ARRAY_AND_SIZE(devopts_generic_range),
+		ARRAY_AND_SIZE(devopts_owon_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
-	},
+		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,	},
 	{
 		"OWON", "XDM1241",
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm1041),
 		scpi_dmm_get_meas_gwinstek,
-		ARRAY_AND_SIZE(devopts_generic_range),
+		ARRAY_AND_SIZE(devopts_owon_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,
 	},
 	{
 		"OWON", "XDM2041",
 		1, 5, cmdset_owon, ARRAY_AND_SIZE(mqopts_owon_xdm2041),
 		scpi_dmm_get_meas_gwinstek,
-		ARRAY_AND_SIZE(devopts_generic_range),
+		ARRAY_AND_SIZE(devopts_owon_range),
 		0, 0, 0, 1e9, TRUE,
 		scpi_dmm_owon_get_range_text, scpi_dmm_owon_set_range_from_text, scpi_dmm_owon_get_range_text_list,
+		scpi_dmm_owon_get_meas_rate_text, scpi_dmm_owon_set_meas_rate_from_text, scpi_dmm_owon_get_meas_rate_text_list,
 	},
 	{
 		"Siglent", "SDM3055",
@@ -335,6 +358,7 @@ SR_PRIV const struct scpi_dmm_model models[] = {
 		scpi_dmm_get_meas_agilent,
 		ARRAY_AND_SIZE(devopts_generic),
 		0, 0, 0, 0, FALSE,
+		NULL, NULL, NULL,
 		NULL, NULL, NULL,
 	},
 };
@@ -501,6 +525,7 @@ static int config_get(uint32_t key, GVariant **data,
 	GVariant *arr[2];
 	int ret;
 	const char *range;
+	const char *meas_rate;
 
 	(void)cg;
 
@@ -531,6 +556,14 @@ static int config_get(uint32_t key, GVariant **data,
 			return SR_ERR_NA;
 		*data = g_variant_new_string(range);
 		return SR_OK;
+	case SR_CONF_MEAS_RATE:
+		if (!devc || !devc->model->get_meas_rate_text)
+			return SR_ERR_NA;
+		meas_rate = devc->model->get_meas_rate_text(sdi);
+		if (!meas_rate || !*meas_rate)
+			return SR_ERR_NA;
+		*data = g_variant_new_string(meas_rate);
+		return SR_OK;
 	default:
 		return SR_ERR_NA;
 	}
@@ -544,6 +577,7 @@ static int config_set(uint32_t key, GVariant *data,
 	enum sr_mqflag mqflag;
 	GVariant *tuple_child;
 	const char *range;
+	const char *meas_rate;
 
 	(void)cg;
 
@@ -566,6 +600,11 @@ static int config_set(uint32_t key, GVariant *data,
 			return SR_ERR_NA;
 		range = g_variant_get_string(data, NULL);
 		return devc->model->set_range_from_text(sdi, range);
+	case SR_CONF_MEAS_RATE:
+		if (!devc || !devc->model->set_meas_rate_from_text)
+			return SR_ERR_NA;
+		meas_rate = g_variant_get_string(data, NULL);
+		return devc->model->set_meas_rate_from_text(sdi, meas_rate);
 	default:
 		return SR_ERR_NA;
 	}
@@ -609,6 +648,11 @@ static int config_list(uint32_t key, GVariant **data,
 		if (!devc || !devc->model->get_range_text_list)
 			return SR_ERR_NA;
 		*data = devc->model->get_range_text_list(sdi);
+		return SR_OK;
+	case SR_CONF_MEAS_RATE:
+		if (!devc || !devc->model->get_meas_rate_text_list)
+			return SR_ERR_NA;
+		*data = devc->model->get_meas_rate_text_list(sdi);
 		return SR_OK;
 	default:
 		(void)devc;
