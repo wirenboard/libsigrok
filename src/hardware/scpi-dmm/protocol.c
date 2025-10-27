@@ -53,6 +53,10 @@ static const char *owon_temp_ranges[] = {
 	"KITS90", "Pt100", NULL /* no auto here */
 };
 
+static const char *owon_rate_ranges[] = {
+		"High", "Medium", "Low", NULL /* High - F, Medium - M, Low - S */
+};
+
 SR_PRIV void scpi_dmm_cmd_delay(struct sr_scpi_dev_inst *scpi)
 {
 	if (WITH_CMD_DELAY)
@@ -574,6 +578,152 @@ SR_PRIV GVariant *scpi_dmm_owon_get_range_text_list(const struct sr_dev_inst *sd
 	list = g_variant_builder_end(&gvb);
 	return list;
 }
+
+
+SR_PRIV int scpi_dmm_owon_set_meas_rate_from_text(const struct sr_dev_inst *sdi,
+            const char *meas_rate)
+{
+	struct dev_context *devc;
+	const struct mqopt_item *mqitem;
+	const char *param;
+
+
+	if (!meas_rate || !*meas_rate)
+		return SR_ERR_ARG;
+
+	devc = sdi->priv;
+
+	/* Get current measurement quantity to return appropriate ranges */
+	int ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &mqitem);
+	if (ret != SR_OK) {
+		return ret;
+	}
+
+	if (!mqitem || !mqitem->scpi_func_setup)
+		return SR_ERR_ARG;
+
+	/* Check if current mode has no measurements rate support */
+	if (!(mqitem->drv_flags & FLAG_HAS_MEAS_RATE)) {
+		return SR_ERR_NA;
+	}
+
+	/* Map textual meas_rate to single-letter code expected by device */
+	if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[0]) == 0)
+		param = "F";
+	else if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[1]) == 0)
+		param = "M";
+	else if (g_ascii_strcasecmp(meas_rate, owon_rate_ranges[2]) == 0)
+		param = "S";
+	else
+		return SR_ERR_ARG;
+
+	/* Send setup command */
+	scpi_dmm_cmd_delay(sdi->conn);
+	ret = sr_scpi_cmd(sdi, devc->cmdset, 0, NULL,
+			  DMM_CMD_SETUP_MEAS_RATE, param);
+	if (ret != SR_OK)
+		return ret;
+
+	if (mqitem->drv_flags & FLAG_CONF_DELAY)
+		g_usleep(devc->model->conf_delay_us);
+
+	return SR_OK;
+}
+
+
+/*
+ * Retrieves the current measurement rate from the OWON device and maps it
+ * to a human-readable text string ("High", "Medium", "Low").
+ */
+SR_PRIV const char *scpi_dmm_owon_get_meas_rate_text(const struct sr_dev_inst *sdi)
+{
+	struct dev_context *devc;
+	int ret;
+	const struct mqopt_item *item;
+	char *response = NULL;
+	char ch;
+
+	if (!sdi)
+		return NULL;
+	devc = sdi->priv;
+	if (!devc)
+		return NULL;
+
+	/* Ensure we have current measurement item */
+	ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &item);
+	if (ret != SR_OK)
+		return NULL;
+	if (!item || !item->scpi_func_setup)
+		return NULL;
+	if (!(item->drv_flags & FLAG_HAS_MEAS_RATE))
+		return NULL;
+
+	/* Query device for speed */
+	scpi_dmm_cmd_delay(sdi->conn);
+	ret = sr_scpi_cmd(sdi, devc->cmdset, 0, NULL,
+		DMM_CMD_QUERY_MEAS_RATE, item->scpi_func_setup);
+	if (ret != SR_OK)
+		return NULL;
+
+	ret = sr_scpi_get_string(sdi->conn, NULL, &response);
+	if (ret != SR_OK || !response) {
+		g_free(response);
+		return NULL;
+	}
+	g_strstrip(response);
+
+	if (!*response) {
+		g_free(response);
+		return NULL;
+	}
+
+	/* use single uppercase character as returned text */
+	ch = g_ascii_toupper(*response);
+	g_free(response);
+
+	/* Map to human-readable text */
+	if (ch == 'F')
+		return owon_rate_ranges[0];
+	if (ch == 'M')
+		return owon_rate_ranges[1];
+	if (ch == 'S')
+		return owon_rate_ranges[2];
+	return NULL;
+}
+
+
+SR_PRIV GVariant *scpi_dmm_owon_get_meas_rate_text_list(const struct sr_dev_inst *sdi)
+{
+	GVariantBuilder gvb;
+	GVariant *list;
+	const struct mqopt_item *mqitem;
+
+	/* Explicitly use string array type, otherwise empty array won't be typed */
+	g_variant_builder_init(&gvb, G_VARIANT_TYPE_STRING_ARRAY);
+
+	/* Get current measurement quantity to return appropriate ranges */
+	int ret = scpi_dmm_get_mq(sdi, NULL, NULL, NULL, &mqitem);
+	if (ret != SR_OK) {
+		/* Return empty list if we can't determine current mode */
+		list = g_variant_builder_end(&gvb);
+		return list;
+	}
+
+	/* Check if current mode has no measurements rate support */
+	if (mqitem && !(mqitem->drv_flags & FLAG_HAS_MEAS_RATE)) {
+		/* Return empty list for modes that don't support measurements rate */
+		list = g_variant_builder_end(&gvb);
+		return list;
+	}
+
+	for (int i = 0; owon_rate_ranges[i] != NULL; i++) {
+		g_variant_builder_add(&gvb, "s", owon_rate_ranges[i]);
+	}
+
+	list = g_variant_builder_end(&gvb);
+	return list;
+}
+
 
 SR_PRIV int scpi_dmm_get_meas_agilent(const struct sr_dev_inst *sdi, size_t ch)
 {
