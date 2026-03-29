@@ -5,8 +5,12 @@
 # Reduce the number of unneeded dependencies with --as-needed.
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
+ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__$(DEB_HOST_MULTIARCH)
+endif
+
 %:
-	dh $@ --with=python3
+	dh $@ --with=python3 --buildsystem=pybuild
 
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr/lib/udev/rules.d
