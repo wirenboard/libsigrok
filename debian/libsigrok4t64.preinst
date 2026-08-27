@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+# protective diversion of files moved from / to /usr, to avoid file loss.
+# These protect both from M-A:same shared file loss and from loss due to moving
+# from libsigrok4 to libsigrok4t64.
+if [ "$1" = upgrade ] || [ "$1" = install ]; then
+    dpkg-divert --package usr-is-merged --no-rename \
+        --divert /lib/udev/rules.d/60-libsigrok.rules.usr-is-merged \
+        --add /lib/udev/rules.d/60-libsigrok.rules
+    dpkg-divert --package usr-is-merged --no-rename \
+        --divert /lib/udev/rules.d/61-libsigrok-plugdev.rules.usr-is-merged \
+        --add /lib/udev/rules.d/61-libsigrok-plugdev.rules
+    dpkg-divert --package usr-is-merged --no-rename \
+        --divert /lib/udev/rules.d/61-libsigrok-uaccess.rules.usr-is-merged \
+        --add /lib/udev/rules.d/61-libsigrok-uaccess.rules
+
+    # These diversions are supposed to be taken over from libsigrok4, which
+    # will attempt to remove them in postinst and postrm. Prevent that.
+    rm -f /var/lib/dpkg/libsigrok4:*.postinst /var/lib/dpkg/libsigrok4:*.postrm
+fi
+
+#DEBHELPER#
+
+exit 0
