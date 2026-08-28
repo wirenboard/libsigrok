@@ -1,4 +1,2 @@
-buildDebSbuild defaultTargets: 'bullseye-armhf bullseye-arm64',
-               aptlyConfig: 'internal-aptly-config-gpg-internal',
-               uploadJob: 'wirenboard/wb-internal-releases/master',
+buildDebSbuild defaultTargets: 'current-armhf current-arm64',
                customReleaseBranchPattern: 'wb'

@@ -2,15 +2,37 @@
 
 # export DH_VERBOSE=1
 
+include /usr/share/dpkg/architecture.mk
+
 # Reduce the number of unneeded dependencies with --as-needed.
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
+export _PYTHON_SYSCONFIGDATA_NAME = _sysconfigdata__$(DEB_HOST_ARCH_OS)_$(DEB_HOST_MULTIARCH)
+export DEB_PYTHON_INSTALL_LAYOUT = deb
+export DEB_CXXFLAGS_MAINT_APPEND = -I/usr/lib/$(DEB_HOST_MULTIARCH)/python3-numpy/numpy/_core/include
+
+PKGCONFIG_DIR := $(CURDIR)/debian/pkgconfig
+export PKG_CONFIG_PATH = $(PKGCONFIG_DIR)
+
 %:
-	dh $@ --with=python3
+	dh $@
+
+override_dh_auto_configure:
+	mkdir -p $(PKGCONFIG_DIR)
+	cp /usr/lib/$(DEB_BUILD_MULTIARCH)/pkgconfig/pygobject-3.0.pc $(PKGCONFIG_DIR)/
+	dh_auto_configure
 
 override_dh_auto_install:
-	mkdir -p debian/tmp/lib/udev/rules.d
-	install -m 644 contrib/60-libsigrok.rules debian/tmp/lib/udev/rules.d/
-	install -m 644 contrib/61-libsigrok-plugdev.rules debian/tmp/lib/udev/rules.d/
-	install -m 644 contrib/61-libsigrok-uaccess.rules debian/tmp/lib/udev/rules.d/
+	mkdir -p debian/tmp/usr/lib/udev/rules.d
+	install -m 644 contrib/60-libsigrok.rules debian/tmp/usr/lib/udev/rules.d/
+	install -m 644 contrib/61-libsigrok-plugdev.rules debian/tmp/usr/lib/udev/rules.d/
+	install -m 644 contrib/61-libsigrok-uaccess.rules debian/tmp/usr/lib/udev/rules.d/
 	dh_auto_install
+
+override_dh_python3:
+	dh_python3
+	dh_numpy3
+
+override_dh_auto_clean:
+	rm -rf $(PKGCONFIG_DIR)
+	dh_auto_clean
