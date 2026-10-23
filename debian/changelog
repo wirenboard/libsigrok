@@ -1,3 +1,12 @@
+libsigrok (0.5.2-5.1+wb106) stable; urgency=medium
+
+  * Python bindings: don't call Python C API without GIL,
+    fixes segfault on Analog.data with Python 3.13
+  * Python bindings: release GIL during device I/O in scan, config_set,
+    create_input and create_output, hold it only for argument conversion
+
+ -- Vladimir Zuevskiy <vladimir.zuevskiy@wirenboard.com>  Fri, 23 Oct 2026 12:10:11 +0300
+
 libsigrok (0.5.2-5.1+wb105) stable; urgency=medium
 
   * Port for Debian 13
