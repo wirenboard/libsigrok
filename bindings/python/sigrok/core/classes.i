@@ -299,6 +299,8 @@ typedef guint pyg_flags_type;
 
 #include "libsigrokcxx/libsigrokcxx.hpp"
 
+/* The helpers below use the Python C API: callers must hold the GIL. */
+
 /* Convert from a Python dict to a std::map<std::string, std::string> */
 std::map<std::string, std::string> dict_to_map_string(PyObject *dict)
 {
@@ -480,7 +482,10 @@ std::map<std::string, Glib::VariantBase> dict_to_map_options(PyObject *dict,
  * call. Calling the Python C API without the GIL is undefined behaviour
  * (Python 3.13 crashes on object allocation without a thread state).
  *
- * These %extend bodies are trivial, so they keep the GIL throughout. */
+ * The %extend bodies below that do device I/O re-acquire the GIL only while
+ * converting Python arguments (SWIG_PYTHON_THREAD_BEGIN_BLOCK) and run the
+ * C++ call with the GIL released. The trivial ones keep the GIL throughout.
+ * Any new %extend using the Python C API must do one of the two. */
 %nothread sigrok::Analog::_data;
 %nothread sigrok::Logic::_data;
 %nothread sigrok::Context::_create_logic_packet_buf;
@@ -490,20 +495,28 @@ std::map<std::string, Glib::VariantBase> dict_to_map_options(PyObject *dict,
 {
     std::vector<std::shared_ptr<sigrok::HardwareDevice> > _scan_kwargs(PyObject *dict)
     {
-        if (!PyDict_Check(dict))
-            throw sigrok::Error(SR_ERR_ARG);
-
-        PyObject *py_key, *py_value;
-        Py_ssize_t pos = 0;
         std::map<const sigrok::ConfigKey *, Glib::VariantBase> options;
 
-        while (PyDict_Next(dict, &pos, &py_key, &py_value))
         {
-            if (!string_check(py_key))
+            SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+
+            if (!PyDict_Check(dict))
                 throw sigrok::Error(SR_ERR_ARG);
-            auto key = sigrok::ConfigKey::get_by_identifier(string_from_python(py_key));
-            auto value = python_to_variant_by_key(py_value, key);
-            options[key] = value;
+
+            PyObject *py_key, *py_value;
+            Py_ssize_t pos = 0;
+
+            while (PyDict_Next(dict, &pos, &py_key, &py_value))
+            {
+                if (!string_check(py_key))
+                    throw sigrok::Error(SR_ERR_ARG);
+                auto key = sigrok::ConfigKey::get_by_identifier(string_from_python(py_key));
+                auto value = python_to_variant_by_key(py_value, key);
+                options[key] = value;
+            }
+
+            if (PyErr_Occurred())
+                throw sigrok::Error(SR_ERR_ARG);
         }
 
         return $self->scan(options);
@@ -523,8 +536,17 @@ std::map<std::string, Glib::VariantBase> dict_to_map_options(PyObject *dict,
 {
     std::shared_ptr<sigrok::Input> _create_input_kwargs(PyObject *dict)
     {
-        return $self->create_input(
-            dict_to_map_options(dict, $self->options()));
+        auto format_options = $self->options();
+        std::map<std::string, Glib::VariantBase> options;
+
+        {
+            SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+            options = dict_to_map_options(dict, format_options);
+            if (PyErr_Occurred())
+                throw sigrok::Error(SR_ERR_ARG);
+        }
+
+        return $self->create_input(options);
     }
 }
 
@@ -542,8 +564,17 @@ std::map<std::string, Glib::VariantBase> dict_to_map_options(PyObject *dict,
     std::shared_ptr<sigrok::Output> _create_output_kwargs(
         std::shared_ptr<sigrok::Device> device, PyObject *dict)
     {
-        return $self->create_output(device,
-            dict_to_map_options(dict, $self->options()));
+        auto format_options = $self->options();
+        std::map<std::string, Glib::VariantBase> options;
+
+        {
+            SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+            options = dict_to_map_options(dict, format_options);
+            if (PyErr_Occurred())
+                throw sigrok::Error(SR_ERR_ARG);
+        }
+
+        return $self->create_output(device, options);
     }
 }
 
@@ -560,7 +591,16 @@ std::map<std::string, Glib::VariantBase> dict_to_map_options(PyObject *dict,
 {
     void config_set(const ConfigKey *key, PyObject *input)
     {
-        $self->config_set(key, python_to_variant_by_key(input, key));
+        Glib::VariantBase value;
+
+        {
+            SWIG_PYTHON_THREAD_BEGIN_BLOCK;
+            value = python_to_variant_by_key(input, key);
+            if (PyErr_Occurred())
+                throw sigrok::Error(SR_ERR_ARG);
+        }
+
+        $self->config_set(key, value);
     }
 }
 
