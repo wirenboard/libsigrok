@@ -476,6 +476,15 @@ std::map<std::string, Glib::VariantBase> dict_to_map_options(PyObject *dict,
 
 %include "../../../swig/classes.i"
 
+/* Bindings are built with -threads, so wrappers release the GIL around the
+ * call. Calling the Python C API without the GIL is undefined behaviour
+ * (Python 3.13 crashes on object allocation without a thread state).
+ *
+ * These %extend bodies are trivial, so they keep the GIL throughout. */
+%nothread sigrok::Analog::_data;
+%nothread sigrok::Logic::_data;
+%nothread sigrok::Context::_create_logic_packet_buf;
+
 /* Support Driver.scan() with keyword arguments. */
 %extend sigrok::Driver
 {
